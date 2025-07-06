@@ -11,13 +11,20 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { BookOpen, User, Settings, LogOut, Bell } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
+  const { user, logout } = useAuth();
+  
   const notifications = [
     { id: 1, message: "سبر جديد مجدول لأحمد محمد", time: "قبل 5 دقائق" },
     { id: 2, message: "اكتمال حفظ الجزء الثالث - فاطمة علي", time: "قبل 15 دقيقة" },
     { id: 3, message: "تحديث جدول المراجعة", time: "قبل ساعة" },
   ];
+
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     <header className="bg-white/90 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
@@ -67,17 +74,20 @@ const Header = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                   <Avatar className="h-10 w-10">
-                    <AvatarImage src="/api/placeholder/40/40" alt="المدير" />
-                    <AvatarFallback className="bg-green-500 text-white">م.ع</AvatarFallback>
+                    <AvatarImage src="/api/placeholder/40/40" alt={user?.name} />
+                    <AvatarFallback className="bg-green-500 text-white">
+                      {user?.name?.charAt(0) || 'م'}
+                    </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">محمد العلي</p>
+                    <p className="text-sm font-medium leading-none">{user?.name}</p>
                     <p className="text-xs leading-none text-muted-foreground">
-                      مدير النظام
+                      {user?.role === 'admin' ? 'مدير النظام' : 
+                       user?.role === 'teacher' ? 'مدرّس' : 'طالب'}
                     </p>
                   </div>
                 </DropdownMenuLabel>
@@ -91,7 +101,10 @@ const Header = () => {
                   <span>الإعدادات</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer text-red-600">
+                <DropdownMenuItem 
+                  className="cursor-pointer text-red-600"
+                  onClick={handleLogout}
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>تسجيل الخروج</span>
                 </DropdownMenuItem>
