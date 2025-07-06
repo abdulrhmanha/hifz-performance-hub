@@ -8,6 +8,9 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AuthPage from "./components/AuthPage";
+import StudentDashboard from "./components/StudentDashboard";
+import TeacherDashboard from "./components/TeacherDashboard";
+import AdminDashboard from "./components/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -31,10 +34,24 @@ const AppContent = () => {
     return <AuthPage />;
   }
 
+  // Render dashboard based on user role
+  const renderDashboard = () => {
+    switch (user.role) {
+      case 'student':
+        return <StudentDashboard />;
+      case 'teacher':
+        return <TeacherDashboard />;
+      case 'admin':
+        return <AdminDashboard />;
+      default:
+        return <Index />;
+    }
+  };
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Index />} />
+        <Route path="/" element={renderDashboard()} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
